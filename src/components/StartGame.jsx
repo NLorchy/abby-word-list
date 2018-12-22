@@ -174,15 +174,13 @@ class StartGame extends Component {
     // what's left is seconds
     const seconds = Math.floor(delta % 60);  // in theory the modulus is not required
 
-    const show_minutes = minutes > 0;
+    const time_str = `Time: ${minutes}:${seconds}`;
 
     return (
       <Row>
         <Col>
           <h1 className="present-word">Done!</h1>
-          <h1 className="present-word">Time</h1>
-          {show_minutes && <h2 className="present-word">Minutes: {minutes}</h2>}
-          <h2 className="present-word">Seconds: {seconds}</h2>
+          <h1 className="present-word">{time_str}</h1>
         </Col>
       </Row>
     );
