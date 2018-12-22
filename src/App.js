@@ -6,7 +6,7 @@ import {Container} from 'reactstrap';
 class App extends Component {
   render() {
     return (
-      <Container fluid>
+      <Container>
         <StartGame />
       </Container>
       

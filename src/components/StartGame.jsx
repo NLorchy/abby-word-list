@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
-import { Jumbotron, Button } from 'reactstrap';
+import { Jumbotron, Button, Row, Col, Progress } from 'reactstrap';
+import { shuffle } from '../shuffle';
+import  wordlist2  from '../wordlist2';
 
-const words = [
-  'This',
-  'Is',
-  'A',
-  'Word',
-  'List'
-]
+// const words = [
+//   'This',
+//   'Is',
+//   'A',
+//   'Word',
+//   'List'
+// ]
 
 class StartGame extends Component {
   constructor(props) {
@@ -18,6 +20,8 @@ class StartGame extends Component {
       startTime: Date.now(),
       endTime: Date.now(),
       wordIndex: 0,
+      progressValue:0,
+      numWords:100,
       wordList: [],
       currentWord: null
     };
@@ -27,13 +31,16 @@ class StartGame extends Component {
   startGame(e) {
 
     if (this.state.isRunning) { return; }
-    const randoList = words.slice(0);
+    var randoList = wordlist2.slice(0);
+    shuffle(randoList);
     const curWord = randoList[0];
     this.setState({
       isRunning: true,
       isDone: false,
       startTime: Date.now(),
       endTime: Date.now(),
+      progressValue: 0,
+      numWords: randoList.length,
       wordIndex: 0,
       wordList: randoList,
       currentWord: curWord
@@ -47,15 +54,32 @@ class StartGame extends Component {
 
   NextWord(isCorrect) {
     console.log(`The word is ${isCorrect}`);
-    const new_index = this.state.wordIndex + 1;
-    if (new_index >= this.state.wordList.length) {
-      this.setState({ isDone: true, isRunning: false, endTime: Date.now() })
-      return
+    let new_list = this.state.wordList.slice(0);
+    let progress_val=this.state.progressValue;
+    if(isCorrect === true){
+      new_list.splice(0,1);
+      progress_val = ((this.state.numWords - new_list.length) / this.state.numWords)*100;
+      console.log(new_list);
     }
-    this.setState({
-      wordIndex: new_index,
-      currentWord: Object.assign(this.state.wordList[new_index])
-    });
+    else{
+      shuffle(new_list);
+      console.log(new_list);
+    }
+
+
+    if(new_list.length > 0){
+      // update
+      this.setState({
+        wordList:new_list,
+        currentWord: Object.assign(new_list[0]),
+        progressValue:progress_val
+      });
+    }
+    else{
+      // game is over
+      this.setState({ isDone: true, isRunning: false, endTime: Date.now() })
+    }
+
   }
 
   renderGameStart() {
@@ -64,15 +88,22 @@ class StartGame extends Component {
     }
 
     return (
-      <Jumbotron>
-        <h1 className="display-3">Abby's Word List!</h1>
-        <p className="lead">
-          <Button
-            color="primary"
-            onClick={(e) => this.startGame(e)}
-          >Let's do this!</Button>
-        </p>
-      </Jumbotron>
+      <Row>
+        <Col>
+          <Jumbotron>
+            <h1 className="display-3">Abby's Word List!</h1>
+            <br />
+            <Row>
+              <Col sm="12" md={{ size: 6, offset: 3 }}><Button block
+                color="primary" size="lg"
+                onClick={(e) => this.startGame(e)}
+              >Let's do this!</Button></Col>
+            </Row>
+          </Jumbotron>
+
+        </Col>
+      </Row>
+
     );
   }
 
@@ -81,21 +112,41 @@ class StartGame extends Component {
       return null;
     }
 
-    return (
-      <Jumbotron>
-        <h1 className="display-3">{this.state.currentWord}</h1>
-        <p className="lead">
-          <Button
-            color="primary"
-            onClick={(e) => this.NextWord(true)}
-          >Correct!</Button>
+    const percentDone=Math.ceil(this.state.progressValue);
+    const percentStr = `${percentDone} %`
 
-          <Button
-            color="primary"
-            onClick={(e) => this.NextWord(false)}
-          >Uh-oh!</Button>
-        </p>
-      </Jumbotron>
+    return (
+      <Row>
+        <Col>
+          <Jumbotron>
+            <h1 className="present-word">{this.state.currentWord}</h1>
+            <br />
+            <Row>
+              <Col>
+                <Button
+                  color="success" size="lg"
+                  onClick={(e) => this.NextWord(true)}
+                  block
+                >Correct!</Button>
+              </Col>
+              <Col>
+                <Button
+                  color="danger" size="lg"
+                  onClick={(e) => this.NextWord(false)}
+                  block
+                >Uh-oh!</Button>
+              </Col>
+            </Row>
+            <br />
+            <br />
+            <Row>
+              <Col>
+                <Progress value={this.state.progressValue}>{percentStr}</Progress>
+              </Col>
+            </Row>
+          </Jumbotron>
+        </Col>
+      </Row>
     );
 
   }
@@ -121,17 +172,19 @@ class StartGame extends Component {
     delta -= minutes * 60;
 
     // what's left is seconds
-    const seconds = delta % 60;  // in theory the modulus is not required
+    const seconds = Math.floor(delta % 60);  // in theory the modulus is not required
 
     const show_minutes = minutes > 0;
 
     return (
-      <div>
-        <h1>Done!</h1>
-        <h1>Time</h1>
-        { show_minutes && <h2>Minutes: {minutes}</h2> }
-        <h2>Seconds: {seconds}</h2>
-      </div>
+      <Row>
+        <Col>
+          <h1 className="present-word">Done!</h1>
+          <h1 className="present-word">Time</h1>
+          {show_minutes && <h2 className="present-word">Minutes: {minutes}</h2>}
+          <h2 className="present-word">Seconds: {seconds}</h2>
+        </Col>
+      </Row>
     );
 
   }
@@ -143,6 +196,7 @@ class StartGame extends Component {
         {this.renderGameStart()}
         {this.renderGameRunning()}
       </div>
+
     );
   }
 }
