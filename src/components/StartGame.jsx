@@ -1,15 +1,14 @@
 import React, { Component } from 'react';
-import { Jumbotron, Button, Row, Col, Progress } from 'reactstrap';
+import { Jumbotron, Button, Row, Col, Progress, FormGroup, Label, Input } from 'reactstrap';
 import { shuffle } from '../shuffle';
-import  wordlist2  from '../wordlist2';
+import wordlist2 from '../wordlist2';
+import wordlist3 from '../wordlist3';
 
-// const words = [
-//   'This',
-//   'Is',
-//   'A',
-//   'Word',
-//   'List'
-// ]
+const word_lists = {
+  "wordlist2":wordlist2,
+  "wordlist3":wordlist3,
+};
+
 
 class StartGame extends Component {
   constructor(props) {
@@ -20,18 +19,33 @@ class StartGame extends Component {
       startTime: Date.now(),
       endTime: Date.now(),
       wordIndex: 0,
-      progressValue:0,
-      numWords:100,
+      progressValue: 0,
+      numWords: 100,
+      listToUse: "wordlist2",
       wordList: [],
       currentWord: null
     };
+
+    this.handleWordChange = this.handleWordChange.bind(this);
+    this.handleListSelect = this.handleListSelect.bind(this);
+  }
+
+  handleWordChange(event) {
+    this.setState({numWords: event.target.value});
+  }
+
+  handleListSelect(event) {
+    console.log(event);
+    this.setState({listToUse: event.target.value});
   }
 
 
   startGame(e) {
 
     if (this.state.isRunning) { return; }
-    var randoList = wordlist2.slice(0);
+    var randoList = word_lists[this.state.listToUse].slice(0,this.state.numWords);
+
+    // var randoList = wordlist2.slice(0);
     shuffle(randoList);
     const curWord = randoList[0];
     this.setState({
@@ -55,27 +69,27 @@ class StartGame extends Component {
   NextWord(isCorrect) {
     console.log(`The word is ${isCorrect}`);
     let new_list = this.state.wordList.slice(0);
-    let progress_val=this.state.progressValue;
-    if(isCorrect === true){
-      new_list.splice(0,1);
-      progress_val = ((this.state.numWords - new_list.length) / this.state.numWords)*100;
+    let progress_val = this.state.progressValue;
+    if (isCorrect === true) {
+      new_list.splice(0, 1);
+      progress_val = ((this.state.numWords - new_list.length) / this.state.numWords) * 100;
       console.log(new_list);
     }
-    else{
+    else {
       shuffle(new_list);
       console.log(new_list);
     }
 
 
-    if(new_list.length > 0){
+    if (new_list.length > 0) {
       // update
       this.setState({
-        wordList:new_list,
+        wordList: new_list,
         currentWord: Object.assign(new_list[0]),
-        progressValue:progress_val
+        progressValue: progress_val
       });
     }
-    else{
+    else {
       // game is over
       this.setState({ isDone: true, isRunning: false, endTime: Date.now() })
     }
@@ -107,12 +121,60 @@ class StartGame extends Component {
     );
   }
 
+  renderGameSelect() {
+    if (this.state.isRunning) {
+      return null;
+    }
+
+    return (
+      <Row>
+        <Col>
+          <Jumbotron>
+            <h1 className="display-3">Abby's Word List!</h1>
+            <br />
+            <Row>
+              <Col>
+              <FormGroup>
+                <Label for="numWords">Number of Words</Label>
+                <Input type="select" name="select" id="numWords" onChange={this.handleWordChange}>
+                  <option>100</option>
+                  <option>80</option>
+                  <option>60</option>
+                  <option>40</option>
+                  <option>20</option>
+                </Input>
+              </FormGroup>
+              </Col>
+              <Col>
+              <FormGroup>
+                <Label for="wordlist">Wordlist</Label>
+                <Input type="select" name="wordlistSelect" id="wordlist" onChange={this.handleListSelect}>
+                  <option value='wordlist2'>List 2</option>
+                  <option value='wordlist3'>List 3</option>
+                </Input>
+              </FormGroup>
+              </Col>
+            </Row>
+            <Row>
+              <Col sm="12" md={{ size: 6, offset: 3 }}><Button block
+                color="primary" size="lg"
+                onClick={(e) => this.startGame(e)}
+              >Let's do this!</Button></Col>
+            </Row>
+          </Jumbotron>
+
+        </Col>
+      </Row>
+
+    );
+  }
+
   renderGameRunning() {
     if (!this.state.isRunning || this.state.isDone) {
       return null;
     }
 
-    const percentDone=Math.ceil(this.state.progressValue);
+    const percentDone = Math.ceil(this.state.progressValue);
     const percentStr = `${percentDone} %`
 
     return (
@@ -191,7 +253,7 @@ class StartGame extends Component {
     return (
       <div>
         {this.renderGameResult()}
-        {this.renderGameStart()}
+        {this.renderGameSelect()}
         {this.renderGameRunning()}
       </div>
 
