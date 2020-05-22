@@ -3,12 +3,19 @@ import { Jumbotron, Button, Row, Col, Progress, FormGroup, Label, Input } from '
 import { shuffle } from '../shuffle';
 import wordlist2 from '../wordlist2';
 import wordlist3 from '../wordlist3';
+import emmyWordList from "../emmy_wordlist";
 
 const word_lists = {
   "wordlist2":wordlist2,
   "wordlist3":wordlist3,
+  "emmyList1":emmyWordList,
 };
 
+const word_list_choices = {
+  "wordlist2":"Abby 2",
+  "wordlist3":"Abby 3",
+  "emmyList1":"Emmy 1",
+};
 
 class StartGame extends Component {
   constructor(props) {
@@ -20,10 +27,11 @@ class StartGame extends Component {
       endTime: Date.now(),
       wordIndex: 0,
       progressValue: 0,
-      numWords: 100,
-      listToUse: "wordlist2",
+      numWords: wordlist2.length + 1,
+      listToUse: "emmyList1",
       wordList: [],
-      currentWord: null
+      currentWord: null,
+      wordOptions:[25]
     };
 
     this.handleWordChange = this.handleWordChange.bind(this);
@@ -36,7 +44,16 @@ class StartGame extends Component {
 
   handleListSelect(event) {
     console.log(event);
-    this.setState({listToUse: event.target.value});
+    const num_words = word_lists[event.target.value].length + 1;
+    let word_options = [20,40,60,80,100];
+    if (num_words < 100)
+    {
+      word_options = [num_words]
+    }
+    this.setState({
+      listToUse: event.target.value,
+      wordOptions: word_options.slice(0)
+    });
   }
 
 
@@ -105,7 +122,7 @@ class StartGame extends Component {
       <Row>
         <Col>
           <Jumbotron>
-            <h1 className="display-3">Abby's Word List!</h1>
+            <h1 className="display-3">Family Word List!</h1>
             <br />
             <Row>
               <Col sm="12" md={{ size: 6, offset: 3 }}><Button block
@@ -130,27 +147,27 @@ class StartGame extends Component {
       <Row>
         <Col>
           <Jumbotron>
-            <h1 className="display-3">Abby's Word List!</h1>
+            <h1 className="display-3">Family Word List!</h1>
             <br />
             <Row>
               <Col>
               <FormGroup>
                 <Label for="numWords">Number of Words</Label>
-                <Input type="select" name="select" id="numWords" onChange={this.handleWordChange}>
-                  <option>100</option>
-                  <option>80</option>
-                  <option>60</option>
-                  <option>40</option>
-                  <option>20</option>
+                <Input type="select" name="select" id="numWords" onChange={this.handleWordChange} defaultValue={this.state.wordOptions[0]}>
+                  {this.state.wordOptions.map(item => <option>{item}</option>)}
                 </Input>
               </FormGroup>
               </Col>
               <Col>
               <FormGroup>
                 <Label for="wordlist">Wordlist</Label>
-                <Input type="select" name="wordlistSelect" id="wordlist" onChange={this.handleListSelect}>
-                  <option value='wordlist2'>List 2</option>
-                  <option value='wordlist3'>List 3</option>
+                <Input type="select" name="wordlistSelect" id="wordlist" onChange={this.handleListSelect}  defaultValue={this.state.listToUse}>
+                  {
+                    Object.keys(word_list_choices).map(key => {
+                      const val = key;
+                      return (<option value={val}>{word_list_choices[key]}</option>)
+                    })
+                  }
                 </Input>
               </FormGroup>
               </Col>
@@ -186,17 +203,17 @@ class StartGame extends Component {
             <Row>
               <Col>
                 <Button
-                  color="success" size="lg"
-                  onClick={(e) => this.NextWord(true)}
-                  block
-                >Correct!</Button>
-              </Col>
-              <Col>
-                <Button
                   color="danger" size="lg"
                   onClick={(e) => this.NextWord(false)}
                   block
                 >Uh-oh!</Button>
+              </Col>
+              <Col>
+                <Button
+                  color="success" size="lg"
+                  onClick={(e) => this.NextWord(true)}
+                  block
+                >Correct!</Button>
               </Col>
             </Row>
             <br />
