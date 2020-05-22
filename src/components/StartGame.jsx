@@ -27,11 +27,11 @@ class StartGame extends Component {
       endTime: Date.now(),
       wordIndex: 0,
       progressValue: 0,
-      numWords: wordlist2.length + 1,
+      numWords: emmyWordList.length,
       listToUse: "emmyList1",
       wordList: [],
       currentWord: null,
-      wordOptions:[25]
+      wordOptions:[25, 20, 15, 10]
     };
 
     this.handleWordChange = this.handleWordChange.bind(this);
@@ -44,11 +44,12 @@ class StartGame extends Component {
 
   handleListSelect(event) {
     console.log(event);
-    const num_words = word_lists[event.target.value].length + 1;
+    const num_words = word_lists[event.target.value].length;
+    console.log('num words: ',num_words)
     let word_options = [20,40,60,80,100];
     if (num_words < 100)
     {
-      word_options = [num_words]
+      word_options = [num_words, 20, 15, 10]
     }
     this.setState({
       listToUse: event.target.value,
@@ -60,10 +61,12 @@ class StartGame extends Component {
   startGame(e) {
 
     if (this.state.isRunning) { return; }
-    var randoList = word_lists[this.state.listToUse].slice(0,this.state.numWords);
+    
+    var randoList = word_lists[this.state.listToUse].slice(0);
+    shuffle(randoList);
+    randoList = randoList.slice(0,this.state.numWords)
 
     // var randoList = wordlist2.slice(0);
-    shuffle(randoList);
     const curWord = randoList[0];
     this.setState({
       isRunning: true,
@@ -154,7 +157,7 @@ class StartGame extends Component {
               <FormGroup>
                 <Label for="numWords">Number of Words</Label>
                 <Input type="select" name="select" id="numWords" onChange={this.handleWordChange} defaultValue={this.state.wordOptions[0]}>
-                  {this.state.wordOptions.map(item => <option>{item}</option>)}
+                  {this.state.wordOptions.map(item => <option key={`numWord-${item}`}>{item}</option>)}
                 </Input>
               </FormGroup>
               </Col>
@@ -165,7 +168,7 @@ class StartGame extends Component {
                   {
                     Object.keys(word_list_choices).map(key => {
                       const val = key;
-                      return (<option value={val}>{word_list_choices[key]}</option>)
+                      return (<option value={val} key={`wordlist-${key}`}>{word_list_choices[key]}</option>)
                     })
                   }
                 </Input>
@@ -259,6 +262,7 @@ class StartGame extends Component {
       <Row>
         <Col>
           <h1 className="present-word">Done!</h1>
+          <h1 className="present-word">Words: {this.state.numWords}</h1>
           <h1 className="present-word">{time_str}</h1>
         </Col>
       </Row>
