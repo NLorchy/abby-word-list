@@ -1,7 +1,7 @@
 {
   "main.css": "/wordlist/static/css/main.bfec3ee2.chunk.css",
-  "main.js": "/wordlist/static/js/main.fc3523f6.chunk.js",
-  "main.js.map": "/wordlist/static/js/main.fc3523f6.chunk.js.map",
+  "main.js": "/wordlist/static/js/main.4861e96f.chunk.js",
+  "main.js.map": "/wordlist/static/js/main.4861e96f.chunk.js.map",
   "static/css/1.f69d9e24.chunk.css": "/wordlist/static/css/1.f69d9e24.chunk.css",
   "static/js/1.4d91f67a.chunk.js": "/wordlist/static/js/1.4d91f67a.chunk.js",
   "static/js/1.4d91f67a.chunk.js.map": "/wordlist/static/js/1.4d91f67a.chunk.js.map",
@@ -10,6 +10,6 @@
   "static/css/main.bfec3ee2.chunk.css.map": "/wordlist/static/css/main.bfec3ee2.chunk.css.map",
   "static/css/1.f69d9e24.chunk.css.map": "/wordlist/static/css/1.f69d9e24.chunk.css.map",
   "index.html": "/wordlist/index.html",
-  "precache-manifest.640ac2301cc079d604d555e7c82939fd.js": "/wordlist/precache-manifest.640ac2301cc079d604d555e7c82939fd.js",
+  "precache-manifest.f8e0d86ca89055f998390aaead0b718d.js": "/wordlist/precache-manifest.f8e0d86ca89055f998390aaead0b718d.js",
   "service-worker.js": "/wordlist/service-worker.js"
 }
