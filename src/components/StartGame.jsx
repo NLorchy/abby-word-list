@@ -203,7 +203,7 @@ class StartGame extends Component {
             <Row>
               <Col>
                 <Button
-                  color="danger" size="lg"
+                  color="secondary" size="lg"
                   onClick={(e) => this.NextWord(false)}
                   block
                 >Uh-oh!</Button>
