@@ -1,13 +1,13 @@
 
 @font-face {
-  font-family: 'FredokaOne';
-  src: local('FredokaOne'), url(./fonts/FredokaOne-Regular.ttf) format('truetype');
+  font-family: 'Questrial';
+  src: local('Questrial'), url(./fonts/Questrial-Regular.ttf) format('truetype');
 }
 
 body {
   /* margin: 0;
   padding: 0; */
-  font-family: -apple-system, BlinkMacSystemFont, "FredokaOne", "Segoe UI", "Roboto", "Oxygen",
+  font-family: -apple-system, BlinkMacSystemFont, "Questrial", "Segoe UI", "Roboto", "Oxygen",
     "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;
