@@ -1,19 +1,22 @@
 import React, { Component } from 'react';
 import { Jumbotron, Button, Row, Col, Progress, FormGroup, Label, Input } from 'reactstrap';
 import { shuffle } from '../shuffle';
+import wordlist1 from '../wordlist1';
 import wordlist2 from '../wordlist2';
 import wordlist3 from '../wordlist3';
 import emmyWordList from "../emmy_wordlist";
 
 const word_lists = {
+  "wordlist1":wordlist1,
   "wordlist2":wordlist2,
   "wordlist3":wordlist3,
   "emmyList1":emmyWordList,
 };
 
 const word_list_choices = {
-  "wordlist2":"Abby 2",
-  "wordlist3":"Abby 3",
+  "wordlist1":"List 1",
+  "wordlist2":"List 2",
+  "wordlist3":"List 3",
   "emmyList1":"Emmy 1",
 };
 
@@ -27,15 +30,17 @@ class StartGame extends Component {
       endTime: Date.now(),
       wordIndex: 0,
       progressValue: 0,
-      numWords: emmyWordList.length,
-      listToUse: "emmyList1",
+      numWords: wordlist1.length,
+      listToUse: "wordlist1",
       wordList: [],
       currentWord: null,
-      wordOptions:[25, 20, 15, 10]
+      wordOptions:[100, 80, 60, 40, 20],
+      shuffleWords: false,
     };
 
     this.handleWordChange = this.handleWordChange.bind(this);
     this.handleListSelect = this.handleListSelect.bind(this);
+    this.handleShuffleChange = this.handleShuffleChange.bind(this);
   }
 
   handleWordChange(event) {
@@ -46,7 +51,7 @@ class StartGame extends Component {
     console.log(event);
     const num_words = word_lists[event.target.value].length;
     console.log('num words: ',num_words)
-    let word_options = [20,40,60,80,100];
+    let word_options = [100,80,60,40,20];
     if (num_words < 100)
     {
       word_options = [num_words, 20, 15, 10]
@@ -57,15 +62,31 @@ class StartGame extends Component {
     });
   }
 
+  handleShuffleChange(event){
+    const shuffleWords = !this.state.shuffleWords;
+    this.setState({
+      shuffleWords
+    })
+  }
+
 
   startGame(e) {
 
-    if (this.state.isRunning) { return; }
-    
-    var randoList = word_lists[this.state.listToUse].slice(0);
-    shuffle(randoList);
-    randoList = randoList.slice(0,this.state.numWords)
+    if (this.state.isRunning) {
+      return;
+    }
 
+    var randoList = [];
+    if (this.state.shuffleWords) {
+      randoList = word_lists[this.state.listToUse].slice(0);
+      shuffle(randoList);
+      randoList = randoList.slice(0, this.state.numWords);
+    } else {
+      randoList = word_lists[this.state.listToUse].slice(0, this.state.numWords);
+    }
+
+    shuffle(randoList);
+    
     // var randoList = wordlist2.slice(0);
     const curWord = randoList[0];
     this.setState({
@@ -172,6 +193,17 @@ class StartGame extends Component {
                     })
                   }
                 </Input>
+              </FormGroup>
+              </Col>
+            </Row>
+            <Row>
+              <Col xs={1}></Col>
+              <Col>
+              <FormGroup>
+                <Label for="shuffleSelect">
+                  <Input type="checkbox" name="shuffleInput" id="shuffleSelect" onChange={this.handleShuffleChange} checked={this.state.shuffleWords} />
+                  Random words
+                </Label>
               </FormGroup>
               </Col>
             </Row>
