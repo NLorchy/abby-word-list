@@ -29,29 +29,36 @@ class StartGame extends Component {
       startTime: Date.now(),
       endTime: Date.now(),
       wordIndex: 0,
+      wordStart: 0,
       progressValue: 0,
-      numWords: wordlist1.length,
+      numWords: 5,
       listToUse: "wordlist1",
       wordList: [],
       currentWord: null,
-      wordOptions:[100, 80, 60, 40, 20],
+      wordOptions:[5, 10, 15, 20, 40, 60, 80, 100],
       shuffleWords: false,
     };
 
     this.handleWordChange = this.handleWordChange.bind(this);
     this.handleListSelect = this.handleListSelect.bind(this);
     this.handleShuffleChange = this.handleShuffleChange.bind(this);
+    this.handleWordStart = this.handleWordStart.bind(this);
+
   }
 
   handleWordChange(event) {
     this.setState({numWords: event.target.value});
   }
 
+  handleWordStart(event){
+    this.setState({wordStart: parseInt(event.target.value)})
+  }
+
   handleListSelect(event) {
     console.log(event);
     const num_words = word_lists[event.target.value].length;
     console.log('num words: ',num_words)
-    let word_options = [100,80,60,40,20];
+    let word_options = [5, 10, 15, 20, 40, 60, 80, 100];
     if (num_words < 100)
     {
       word_options = [num_words, 20, 15, 10]
@@ -77,12 +84,21 @@ class StartGame extends Component {
     }
 
     var randoList = [];
+    const startIndex = parseInt(this.state.wordStart);
+    let endIndex = startIndex + parseInt(this.state.numWords);
+
+    console.log('start index', startIndex)
+    console.log('end index', endIndex)
+    if (endIndex > word_lists[this.state.listToUse].length){
+      endIndex = word_lists[this.state.listToUse].length + 1;
+      console.log('truncating wordlist', endIndex)
+    }
     if (this.state.shuffleWords) {
       randoList = word_lists[this.state.listToUse].slice(0);
       shuffle(randoList);
-      randoList = randoList.slice(0, this.state.numWords);
+      randoList = randoList.slice(startIndex, endIndex);
     } else {
-      randoList = word_lists[this.state.listToUse].slice(0, this.state.numWords);
+      randoList = word_lists[this.state.listToUse].slice(startIndex, endIndex);
     }
 
     shuffle(randoList);
@@ -175,6 +191,12 @@ class StartGame extends Component {
             <br />
             <Row>
               <Col>
+              <FormGroup>
+                <Label for="wordStart">Start Index</Label>
+                <Input name="select" id="wordStart" onChange={this.handleWordStart} defaultValue={0}>
+                </Input>
+              </FormGroup>
+              </Col><Col>
               <FormGroup>
                 <Label for="numWords">Number of Words</Label>
                 <Input type="select" name="select" id="numWords" onChange={this.handleWordChange} defaultValue={this.state.wordOptions[0]}>
